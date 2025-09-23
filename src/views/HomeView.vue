@@ -1,14 +1,20 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import api from "@/services/api.js";
+import { edital, niveisDificuldade } from "@/data/editalData.js";
 
-const materia = ref("Direito Administrativo");
-const topico = ref("Atos Administrativos");
+const materiaSelecionada = ref(Object.keys(edital)[0]);
+const topicoSelecionado = ref(edital[materiaSelecionada.value][0]);
+const nivelSelecionado = ref(niveisDificuldade[1]);
+
 const isLoading = ref(false);
 const error = ref(null);
-
 const questaoGerada = ref(null);
 const respostaRevelada = ref(false);
+
+const topicosDisponiveis = computed(() => {
+  return edital[materiaSelecionada.value] || [];
+});
 
 const handleSubmit = async () => {
   isLoading.value = true;
@@ -18,9 +24,9 @@ const handleSubmit = async () => {
 
   try {
     const response = await api.gerarQuestao(
-      materia.value,
-      topico.value,
-      "Médio"
+      materiaSelecionada.value,
+      topicoSelecionado.value,
+      nivelSelecionado.value
     );
     questaoGerada.value = response.data;
   } catch (err) {
@@ -35,6 +41,10 @@ const handleSubmit = async () => {
 const revelarResposta = () => {
   respostaRevelada.value = true;
 };
+
+const atualizarTopico = () => {
+  topicoSelecionado.value = edital[materiaSelecionada.value][0];
+};
 </script>
 
 <template>
@@ -47,12 +57,47 @@ const revelarResposta = () => {
     <form @submit.prevent="handleSubmit" class="form-container">
       <div class="form-group">
         <label for="materia">Matéria</label>
-        <input type="text" id="materia" v-model="materia" required />
+        <select
+          id="materia"
+          v-model="materiaSelecionada"
+          @change="atualizarTopico"
+        >
+          <option
+            v-for="materia in Object.keys(edital)"
+            :key="materia"
+            :value="materia"
+          >
+            {{ materia }}
+          </option>
+        </select>
       </div>
+
       <div class="form-group">
         <label for="topico">Tópico</label>
-        <input type="text" id="topico" v-model="topico" required />
+        <select id="topico" v-model="topicoSelecionado">
+          <option
+            v-for="topico in topicosDisponiveis"
+            :key="topico"
+            :value="topico"
+          >
+            {{ topico }}
+          </option>
+        </select>
       </div>
+
+      <div class="form-group">
+        <label for="nivel">Nível de Dificuldade</label>
+        <select id="nivel" v-model="nivelSelecionado">
+          <option
+            v-for="nivel in niveisDificuldade"
+            :key="nivel"
+            :value="nivel"
+          >
+            {{ nivel }}
+          </option>
+        </select>
+      </div>
+
       <button type="submit" :disabled="isLoading">
         {{ isLoading ? "Gerando..." : "Gerar Questão" }}
       </button>
@@ -94,7 +139,7 @@ const revelarResposta = () => {
   margin: 2rem auto;
   padding: 1rem;
   font-family: sans-serif;
-  color: #333;
+  color: #bebebe;
 }
 header {
   text-align: center;
@@ -146,6 +191,7 @@ button:disabled {
   border: 1px solid #eee;
   padding: 1.5rem;
   border-radius: 8px;
+  color: #333;
 }
 .enunciado {
   font-weight: bold;
@@ -167,5 +213,11 @@ button:disabled {
   background-color: #e9f5e9;
   border: 1px solid #a3d9a3;
   border-radius: 4px;
+}
+select {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
 }
 </style>
