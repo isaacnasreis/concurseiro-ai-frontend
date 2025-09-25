@@ -13,7 +13,8 @@ const uploadError = ref(null);
 const isLoading = ref(false);
 const error = ref(null);
 const questaoGerada = ref(null);
-const respostaRevelada = ref(false);
+const respostaUsuario = ref(null);
+const quizSubmetido = ref(false);
 
 const topicosDisponiveis = computed(() => {
   return edital[materiaSelecionada.value] || [];
@@ -23,7 +24,8 @@ const handleSubmit = async () => {
   isLoading.value = true;
   error.value = null;
   questaoGerada.value = null;
-  respostaRevelada.value = false;
+  respostaUsuario.value = null;
+  quizSubmetido.value = false;
 
   try {
     const response = await api.gerarQuestao(
@@ -61,12 +63,33 @@ const handleFileUpload = async (event) => {
   }
 };
 
-const revelarResposta = () => {
-  respostaRevelada.value = true;
+const selecionarResposta = (alternativa) => {
+  if (quizSubmetido.value) return;
+  
+  respostaUsuario.value = alternativa;
+};
+
+const verificarResposta = () => {
+  if (!respostaUsuario.value) return;
+  quizSubmetido.value = true;
 };
 
 const atualizarTopico = () => {
   topicoSelecionado.value = edital[materiaSelecionada.value][0];
+};
+
+const getAlternativaClass = (alternativa) => {
+  if (!quizSubmetido.value) {
+    return { selecionada: respostaUsuario.value === alternativa };
+  } else {
+    const isCorreta = alternativa === questaoGerada.value.resposta_correta;
+    const isSelecionadaPeloUsuario = alternativa === respostaUsuario.value;
+
+    return {
+      correta: isCorreta,
+      incorreta: !isCorreta && isSelecionadaPeloUsuario,
+    };
+  }
 };
 </script>
 
@@ -159,19 +182,23 @@ const atualizarTopico = () => {
     <article v-if="questaoGerada" class="questao-container">
       <h2>Questão Gerada:</h2>
       <p class="enunciado">{{ questaoGerada.enunciado }}</p>
+
       <ul class="alternativas">
-        <li v-for="(alt, index) in questaoGerada.alternativas" :key="index">
-          {{ alt }}
+        <li
+          v-for="(alt, index) in questaoGerada.alternativas"
+          :key="index"
+          @click="selecionarResposta(alt)"
+          :class="getAlternativaClass(alt)"
+        >
+          <span class="letra">{{ String.fromCharCode(65 + index) }}</span> {{ alt }}
         </li>
       </ul>
-      <button @click="revelarResposta" v-if="!respostaRevelada">
-        Revelar Resposta
+
+      <button @click="verificarResposta" v-if="!quizSubmetido" :disabled="!respostaUsuario">
+        Confirmar Resposta
       </button>
-      <div v-if="respostaRevelada" class="resposta-container">
-        <p>
-          <strong>Resposta Correta:</strong>
-          {{ questaoGerada.resposta_correta }}
-        </p>
+
+      <div v-if="quizSubmetido" class="resposta-container">
         <p><strong>Comentários:</strong> {{ questaoGerada.comentarios }}</p>
       </div>
     </article>
@@ -242,15 +269,36 @@ button:disabled {
   font-weight: bold;
   margin-bottom: 1rem;
 }
-.alternativas {
-  list-style-type: none;
-  padding: 0;
-}
 .alternativas li {
-  padding: 0.5rem;
+  padding: 0.8rem;
   border: 1px solid #ddd;
   margin-bottom: 0.5rem;
   border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+}
+.alternativas li:hover {
+  background-color: #f0f0f0;
+}
+.alternativas .letra {
+  font-weight: bold;
+  margin-right: 0.8rem;
+}
+.alternativas .selecionada {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+}
+.alternativas .correta {
+  background-color: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+}
+.alternativas .incorreta {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
 }
 .resposta-container {
   margin-top: 1rem;
