@@ -8,6 +8,17 @@ const apiClient = axios.create({
 });
 
 export default {
+  extrairContexto(arquivo) {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+
+    return apiClient.post('/extrair-contexto-arquivo/', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  },
+
   gerarQuestao(materia, topico, nivel_dificuldade, contexto) {
     const payload = {
       materia,

@@ -7,6 +7,8 @@ const materiaSelecionada = ref(Object.keys(edital)[0]);
 const topicoSelecionado = ref(edital[materiaSelecionada.value][0]);
 const nivelSelecionado = ref(niveisDificuldade[1]);
 const contexto = ref('');
+const uploadStatus = ref('');
+const uploadError = ref(null);
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -37,6 +39,25 @@ const handleSubmit = async () => {
       "Não foi possível gerar a questão. Verifique o backend e tente novamente.";
   } finally {
     isLoading.value = false;
+  }
+};
+
+const handleFileUpload = async (event) => {
+  const arquivo = event.target.files[0];
+  if (!arquivo) return;
+
+  uploadStatus.value = 'Enviando arquivo...';
+  uploadError.value = null;
+  contexto.value = '';
+
+  try {
+    const response = await api.extrairContexto(arquivo);
+    contexto.value = response.data.contexto;
+    uploadStatus.value = `Arquivo "${response.data.nome_arquivo}" carregado com sucesso!`;
+  } catch (err) {
+    console.error('Falha no upload:', err);
+    uploadStatus.value = '';
+    uploadError.value = err.response?.data?.detail || 'Ocorreu um erro ao enviar o arquivo.';
   }
 };
 
@@ -101,12 +122,19 @@ const atualizarTopico = () => {
       </div>
 
       <div class="form-group">
-        <label for="contexto">Contexto (Opcional)</label>
+        <label for="upload-contexto">Contexto (Opcional)</label>
+        <input type="file" id="upload-contexto" @change="handleFileUpload" accept=".txt" />
+        
+        <p v-if="uploadStatus" class="upload-status">{{ uploadStatus }}</p>
+        <p v-if="uploadError" class="error-message">{{ uploadError }}</p>
+
         <textarea 
+          v-if="contexto"
           id="contexto" 
           v-model="contexto" 
           rows="8" 
-          placeholder="Cole aqui um trecho do seu material de estudo para que a questão seja baseada nele..."
+          placeholder="Conteúdo do arquivo aparecerá aqui..."
+          readonly 
         ></textarea>
       </div>
 
@@ -232,11 +260,14 @@ select {
   border-radius: 4px;
   background-color: white;
 }
-textarea {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-family: sans-serif;
-  font-size: 1rem;
+.upload-status {
+  font-size: 0.9rem;
+  color: green;
+  margin-top: 0.5rem;
+}
+textarea[readonly] {
+  background-color: #f1f1f1;
+  color: #555;
+  margin-top: 0.5rem;
 }
 </style>
