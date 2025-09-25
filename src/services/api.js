@@ -28,4 +28,15 @@ export default {
     };
     return apiClient.post("/gerar-questao", payload);
   },
+
+  gerarSimulado(config) {
+    const payload = {
+      materia: config.materia,
+      topico: config.topico,
+      nivel_dificuldade: config.nivel,
+      quantidade_questoes: config.quantidade,
+      contexto: config.contexto
+    };
+    return apiClient.post('/gerar-simulado', payload);
+  }
 };
