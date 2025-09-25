@@ -123,7 +123,12 @@ const atualizarTopico = () => {
 
       <div class="form-group">
         <label for="upload-contexto">Contexto (Opcional)</label>
-        <input type="file" id="upload-contexto" @change="handleFileUpload" accept=".txt" />
+        <input 
+          type="file" 
+          id="upload-contexto" 
+          @change="handleFileUpload" 
+          accept=".txt,.pdf" 
+        />
         
         <p v-if="uploadStatus" class="upload-status">{{ uploadStatus }}</p>
         <p v-if="uploadError" class="error-message">{{ uploadError }}</p>
