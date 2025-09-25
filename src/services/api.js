@@ -8,11 +8,12 @@ const apiClient = axios.create({
 });
 
 export default {
-  gerarQuestao(materia, topico, nivel_dificuldade) {
+  gerarQuestao(materia, topico, nivel_dificuldade, contexto) {
     const payload = {
       materia,
       topico,
       nivel_dificuldade,
+      contexto
     };
     return apiClient.post("/gerar-questao", payload);
   },

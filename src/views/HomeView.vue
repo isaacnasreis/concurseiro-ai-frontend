@@ -6,6 +6,7 @@ import { edital, niveisDificuldade } from "@/data/editalData.js";
 const materiaSelecionada = ref(Object.keys(edital)[0]);
 const topicoSelecionado = ref(edital[materiaSelecionada.value][0]);
 const nivelSelecionado = ref(niveisDificuldade[1]);
+const contexto = ref('');
 
 const isLoading = ref(false);
 const error = ref(null);
@@ -26,7 +27,8 @@ const handleSubmit = async () => {
     const response = await api.gerarQuestao(
       materiaSelecionada.value,
       topicoSelecionado.value,
-      nivelSelecionado.value
+      nivelSelecionado.value,
+      contexto.value
     );
     questaoGerada.value = response.data;
   } catch (err) {
@@ -96,6 +98,16 @@ const atualizarTopico = () => {
             {{ nivel }}
           </option>
         </select>
+      </div>
+
+      <div class="form-group">
+        <label for="contexto">Contexto (Opcional)</label>
+        <textarea 
+          id="contexto" 
+          v-model="contexto" 
+          rows="8" 
+          placeholder="Cole aqui um trecho do seu material de estudo para que a questão seja baseada nele..."
+        ></textarea>
       </div>
 
       <button type="submit" :disabled="isLoading">
@@ -219,5 +231,12 @@ select {
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: white;
+}
+textarea {
+  padding: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: sans-serif;
+  font-size: 1rem;
 }
 </style>
