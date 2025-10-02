@@ -1,9 +1,9 @@
-import axios from "axios";
+import axios from 'axios';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -14,8 +14,8 @@ export default {
 
     return apiClient.post('/extrair-contexto-arquivo/', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
-      }
+        'Content-Type': 'multipart/form-data',
+      },
     });
   },
 
@@ -24,9 +24,9 @@ export default {
       materia,
       topico,
       nivel_dificuldade,
-      contexto
+      contexto,
     };
-    return apiClient.post("/gerar-questao", payload);
+    return apiClient.post('/gerar-questao', payload);
   },
 
   gerarSimulado(config) {
@@ -35,8 +35,8 @@ export default {
       topico: config.topico,
       nivel_dificuldade: config.nivel,
       quantidade_questoes: config.quantidade,
-      contexto: config.contexto
+      contexto: config.contexto,
     };
     return apiClient.post('/gerar-simulado', payload);
-  }
+  },
 };

@@ -1,7 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
-import api from "@/services/api.js";
-import { edital, niveisDificuldade } from "@/data/editalData.js";
+import { ref, computed } from 'vue';
+import api from '@/services/api.js';
+import { edital, niveisDificuldade } from '@/data/editalData.js';
 
 const materiaSelecionada = ref(Object.keys(edital)[0]);
 const topicoSelecionado = ref(edital[materiaSelecionada.value][0]);
@@ -36,9 +36,9 @@ const handleSubmit = async () => {
     );
     questaoGerada.value = response.data;
   } catch (err) {
-    console.error("Falha ao gerar questão:", err);
+    console.error('Falha ao gerar questão:', err);
     error.value =
-      "Não foi possível gerar a questão. Verifique o backend e tente novamente.";
+      'Não foi possível gerar a questão. Verifique o backend e tente novamente.';
   } finally {
     isLoading.value = false;
   }
@@ -59,13 +59,14 @@ const handleFileUpload = async (event) => {
   } catch (err) {
     console.error('Falha no upload:', err);
     uploadStatus.value = '';
-    uploadError.value = err.response?.data?.detail || 'Ocorreu um erro ao enviar o arquivo.';
+    uploadError.value =
+      err.response?.data?.detail || 'Ocorreu um erro ao enviar o arquivo.';
   }
 };
 
 const selecionarResposta = (alternativa) => {
   if (quizSubmetido.value) return;
-  
+
   respostaUsuario.value = alternativa;
 };
 
@@ -146,28 +147,28 @@ const getAlternativaClass = (alternativa) => {
 
       <div class="form-group">
         <label for="upload-contexto">Contexto (Opcional)</label>
-        <input 
-          type="file" 
-          id="upload-contexto" 
-          @change="handleFileUpload" 
-          accept=".txt,.pdf" 
+        <input
+          type="file"
+          id="upload-contexto"
+          @change="handleFileUpload"
+          accept=".txt,.pdf"
         />
-        
+
         <p v-if="uploadStatus" class="upload-status">{{ uploadStatus }}</p>
         <p v-if="uploadError" class="error-message">{{ uploadError }}</p>
 
-        <textarea 
+        <textarea
           v-if="contexto"
-          id="contexto" 
-          v-model="contexto" 
-          rows="8" 
+          id="contexto"
+          v-model="contexto"
+          rows="8"
           placeholder="Conteúdo do arquivo aparecerá aqui..."
-          readonly 
+          readonly
         ></textarea>
       </div>
 
       <button type="submit" :disabled="isLoading">
-        {{ isLoading ? "Gerando..." : "Gerar Questão" }}
+        {{ isLoading ? 'Gerando...' : 'Gerar Questão' }}
       </button>
     </form>
 
@@ -190,11 +191,16 @@ const getAlternativaClass = (alternativa) => {
           @click="selecionarResposta(alt)"
           :class="getAlternativaClass(alt)"
         >
-          <span class="letra">{{ String.fromCharCode(65 + index) }}</span> {{ alt }}
+          <span class="letra">{{ String.fromCharCode(65 + index) }}</span>
+          {{ alt }}
         </li>
       </ul>
 
-      <button @click="verificarResposta" v-if="!quizSubmetido" :disabled="!respostaUsuario">
+      <button
+        @click="verificarResposta"
+        v-if="!quizSubmetido"
+        :disabled="!respostaUsuario"
+      >
         Confirmar Resposta
       </button>
 
