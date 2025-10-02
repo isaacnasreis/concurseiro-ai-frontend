@@ -74,6 +74,21 @@ const reiniciarSimulado = () => {
   respostasUsuario.value = [];
   questaoAtualIndex.value = 0;
 };
+
+const getClasseRevisao = (questao, alternativa, index) => {
+  const respostaCorreta = questao.resposta_correta;
+  const respostaUsuario = respostasUsuario.value[index];
+
+  if (alternativa === respostaCorreta) {
+    return { correta: true };
+  }
+
+  if (alternativa === respostaUsuario) {
+    return { 'resposta-usuario-incorreta': true };
+  }
+
+  return {};
+};
 </script>
 
 <template>
@@ -161,7 +176,44 @@ const reiniciarSimulado = () => {
         >
         <span>({{ pontuacaoFinal.percentual }}%)</span>
       </div>
-      <button @click="reiniciarSimulado">Fazer Novo Simulado</button>
+      <button @click="reiniciarSimulado" class="botao-reiniciar">
+        Fazer Novo Simulado
+      </button>
+
+      <div class="revisao-container">
+        <h3>Revisão Detalhada</h3>
+        <div
+          v-for="(questao, index) in questoes"
+          :key="index"
+          class="revisao-questao"
+        >
+          <p class="enunciado">
+            <strong>Questão {{ index + 1 }}:</strong> {{ questao.enunciado }}
+          </p>
+          <ul class="alternativas-revisao">
+            <li
+              v-for="alt in questao.alternativas"
+              :key="alt"
+              :class="getClasseRevisao(questao, alt, index)"
+            >
+              {{ alt }}
+            </li>
+          </ul>
+          <div class="revisao-comentarios">
+            <p>
+              <strong>Sua Resposta:</strong>
+              {{ respostasUsuario[index] || 'Não respondida' }}
+            </p>
+            <p>
+              <strong>Resposta Correta:</strong> {{ questao.resposta_correta }}
+            </p>
+            <details>
+              <summary>Ver Comentários da IA</summary>
+              <p>{{ questao.comentarios }}</p>
+            </details>
+          </div>
+        </div>
+      </div>
     </div>
   </main>
 </template>
@@ -255,5 +307,70 @@ button:disabled {
   padding: 2rem;
   border-radius: 8px;
   color: #343a40;
+}
+.botao-reiniciar {
+  display: block;
+  margin: 0 auto 2rem auto;
+}
+
+.revisao-container {
+  margin-top: 2rem;
+  border-top: 1px solid #ccc;
+  padding-top: 1rem;
+}
+
+.revisao-questao {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 8px;
+}
+
+.revisao-questao .enunciado {
+  margin-bottom: 1rem;
+}
+
+.alternativas-revisao {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.alternativas-revisao li {
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.alternativas-revisao .correta {
+  background-color: #dcfce7;
+  border-color: #86efac;
+  color: #15803d;
+  font-weight: bold;
+}
+
+.alternativas-revisao .resposta-usuario-incorreta {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #b91c1c;
+  text-decoration: line-through;
+}
+
+.revisao-comentarios {
+  font-size: 0.9rem;
+  background-color: #f8f9fa;
+  color: #343a40;
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+.revisao-comentarios details {
+  cursor: pointer;
+}
+
+.revisao-comentarios summary {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 </style>
