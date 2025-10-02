@@ -14,6 +14,11 @@ const router = createRouter({
       name: 'simulado',
       component: () => import('../views/SimuladoView.vue'),
     },
+    {
+      path: '/simplificador',
+      name: 'simplificador',
+      component: () => import('../views/SimplificadorView.vue'),
+    }
   ],
 });
 

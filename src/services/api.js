@@ -39,4 +39,8 @@ export default {
     };
     return apiClient.post('/gerar-simulado', payload);
   },
+
+  simplificarTexto(texto_original, comando) {
+    return apiClient.post('/simplificar-texto', { texto_original, comando });
+  },
 };

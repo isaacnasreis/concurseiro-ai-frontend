@@ -9,6 +9,7 @@ import { RouterLink, RouterView } from 'vue-router';
       <nav>
         <RouterLink to="/">Gerador</RouterLink>
         <RouterLink to="/simulado">Simulado</RouterLink>
+        <RouterLink to="/simplificador">Simplificador</RouterLink>
       </nav>
     </div>
   </header>
