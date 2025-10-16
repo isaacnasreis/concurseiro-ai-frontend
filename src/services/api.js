@@ -43,4 +43,17 @@ export default {
   simplificarTexto(texto_original, comando) {
     return apiClient.post('/simplificar-texto', { texto_original, comando });
   },
+
+  salvarSimulado(resultado) {
+    const payload = {
+      materia: resultado.materia,
+      topico: resultado.topico,
+      questoes: resultado.questoes.map((q, index) => ({
+        enunciado: q.enunciado,
+        resposta_correta: q.resposta_correta,
+        resposta_usuario: resultado.respostasUsuario[index] || null,
+      })),
+    };
+    return apiClient.post('/salvar-simulado/', payload);
+  },
 };

@@ -64,8 +64,23 @@ const proximaQuestao = () => {
   }
 };
 
-const finalizarSimulado = () => {
+const finalizarSimulado = async () => {
   etapa.value = 'resultados';
+
+  const resultadoParaSalvar = {
+    materia: config.value.materia,
+    topico: config.value.topico,
+    questoes: questoes.value,
+    respostasUsuario: respostasUsuario.value,
+  };
+
+  try {
+    console.log('Enviando resultados para salvar...');
+    await api.salvarSimulado(resultadoParaSalvar);
+    console.log('Resultados salvos com sucesso!');
+  } catch (err) {
+    console.error('Falha ao salvar os resultados do simulado:', err);
+  }
 };
 
 const reiniciarSimulado = () => {
