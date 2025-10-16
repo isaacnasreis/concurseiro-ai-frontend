@@ -10,6 +10,7 @@ import { RouterLink, RouterView } from 'vue-router';
         <RouterLink to="/">Gerador</RouterLink>
         <RouterLink to="/simulado">Simulado</RouterLink>
         <RouterLink to="/simplificador">Simplificador</RouterLink>
+        <RouterLink to="/mentor">Mentor AI</RouterLink>
       </nav>
     </div>
   </header>
