@@ -38,11 +38,17 @@ const pontuacaoFinal = computed(() => {
   return { acertos, total, percentual };
 });
 
+const abortController = ref(null);
+
 const iniciarSimulado = async () => {
   isLoading.value = true;
   error.value = null;
+  abortController.value = new AbortController();
+
   try {
-    const response = await api.gerarSimulado(config.value);
+    const response = await api.gerarSimulado(config.value, {
+      signal: abortController.value.signal
+    });
     if (response.data.length === 0) {
       throw new Error('A IA não retornou nenhuma questão. Tente novamente.');
     }
@@ -50,9 +56,20 @@ const iniciarSimulado = async () => {
     respostasUsuario.value = Array(questoes.value.length).fill(null);
     etapa.value = 'execucao';
   } catch (err) {
-    error.value = err.response?.data?.detail || 'Falha ao gerar o simulado.';
+    if (err.name === 'CanceledError' || err.message === 'canceled') {
+      error.value = 'Geração cancelada pelo usuário.';
+    } else {
+      error.value = err.response?.data?.detail || 'Falha ao gerar o simulado.';
+    }
   } finally {
     isLoading.value = false;
+    abortController.value = null;
+  }
+};
+
+const cancelarGeracao = () => {
+  if (abortController.value) {
+    abortController.value.abort();
   }
 };
 
@@ -113,7 +130,21 @@ const getClasseRevisao = (questao, alternativa, index) => {
   <main class="container">
     <div v-if="etapa === 'configuracao'">
       <h2>Configurar Simulado</h2>
-      <form @submit.prevent="iniciarSimulado" class="form-container">
+
+      <div v-if="isLoading" class="loading-container glass-panel">
+        <div class="spinner">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80">
+            <circle cx="50" cy="50" r="40" stroke="var(--c-brand-primary)" stroke-width="8" fill="none" stroke-dasharray="160" stroke-linecap="round">
+              <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="1.2s" repeatCount="indefinite" />
+            </circle>
+          </svg>
+        </div>
+        <h3>Processando com IA...</h3>
+        <p>Gerando perguntas exclusivas para você. Isso pode levar alguns segundos.</p>
+        <button @click="cancelarGeracao" class="btn-cancelar">Cancelar Geracão</button>
+      </div>
+
+      <form v-else @submit.prevent="iniciarSimulado" class="form-container">
         <div class="form-group">
           <label for="materia">Matéria</label>
           <select id="materia" v-model="config.materia">
@@ -148,9 +179,7 @@ const getClasseRevisao = (questao, alternativa, index) => {
             max="10"
           />
         </div>
-        <button type="submit" :disabled="isLoading">
-          {{ isLoading ? 'Gerando Simulado...' : 'Iniciar Simulado' }}
-        </button>
+        <button type="submit">Iniciar Simulado</button>
         <div v-if="error" class="error-message">{{ error }}</div>
       </form>
     </div>

@@ -29,7 +29,7 @@ export default {
     return apiClient.post('/simulados/gerar-questao', payload);
   },
 
-  gerarSimulado(config) {
+  gerarSimulado(config, options = {}) {
     const payload = {
       materia: config.materia,
       topico: config.topico,
@@ -37,7 +37,7 @@ export default {
       quantidade_questoes: config.quantidade,
       contexto: config.contexto,
     };
-    return apiClient.post('/simulados/gerar-simulado', payload);
+    return apiClient.post('/simulados/gerar-simulado', payload, options);
   },
 
   simplificarTexto(texto_original, comando) {
