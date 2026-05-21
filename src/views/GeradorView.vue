@@ -188,7 +188,6 @@ const getAlternativaClass = (alternativa) => {
         <button type="submit">Gerar Questão</button>
         <div v-if="error" class="error-message">{{ error }}</div>
       </form>
-    </div>
 
     <article v-if="questaoGerada && !isLoading" class="questao-container glass-panel">
       <h2>Questão Gerada:</h2>
