@@ -481,4 +481,46 @@ button:disabled {
   font-weight: 600;
   color: var(--c-brand-primary);
 }
+
+/* Loading State UI */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  background: var(--c-bg-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+
+.spinner {
+  margin-bottom: var(--space-6);
+}
+
+.loading-container h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--c-brand-primary);
+  margin-bottom: var(--space-2);
+}
+
+.loading-container p {
+  color: var(--c-text-secondary);
+  margin-bottom: var(--space-8);
+  max-width: 400px;
+}
+
+.btn-cancelar {
+  background-color: transparent;
+  color: var(--c-text-secondary);
+  border: 1px solid var(--c-border);
+}
+
+.btn-cancelar:hover {
+  background-color: var(--c-bg-surface-hover);
+  color: var(--c-danger);
+  border-color: var(--c-danger);
+}
 </style>
