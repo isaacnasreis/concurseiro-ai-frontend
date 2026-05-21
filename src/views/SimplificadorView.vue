@@ -53,7 +53,7 @@ const processarTexto = async () => {
       explicá-lo.
     </p>
 
-    <div class="form-container">
+    <div class="form-container glass-panel">
       <div class="form-group">
         <label for="upload-contexto">1. Envie um arquivo (Opcional)</label>
         <input type="file" @change="handleFileUpload" accept=".txt,.pdf" />
@@ -81,7 +81,7 @@ const processarTexto = async () => {
       <p v-if="error" class="error-message">{{ error }}</p>
     </div>
 
-    <div v-if="textoProcessado" class="resultado-container">
+    <div v-if="textoProcessado" class="resultado-container glass-panel">
       <h3>Texto Processado pela IA</h3>
       <pre>{{ textoProcessado }}</pre>
     </div>
@@ -91,54 +91,114 @@ const processarTexto = async () => {
 <style scoped>
 .container {
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
+  margin: var(--space-4) auto;
+  padding: var(--space-4);
+  animation: fadeIn 0.4s ease;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  text-align: center;
+  color: var(--c-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+p {
+  text-align: center;
+  color: var(--c-text-secondary);
+  margin-bottom: var(--space-6);
+}
+
 .form-container,
 .resultado-container {
-  margin-top: 2rem;
-  color: #343a40;
+  margin-bottom: var(--space-6);
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--space-4);
 }
+
 label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  color: var(--c-text-primary);
 }
-input,
-textarea,
-button {
-  font-family: sans-serif;
-  font-size: 1rem;
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+
+input[type="text"],
+textarea {
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  background-color: var(--c-bg-surface);
+  color: var(--c-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-fast);
 }
+
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--c-brand-primary);
+}
+
+input[type="file"] {
+  padding: var(--space-2) 0;
+  color: var(--c-text-secondary);
+}
+
 button {
-  background-color: #28a745;
+  padding: var(--space-3);
+  background-color: var(--c-brand-primary);
   color: white;
+  border: none;
+  border-radius: var(--radius-md);
   cursor: pointer;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
+  margin-top: var(--space-2);
 }
+
+button:hover:not(:disabled) {
+  background-color: var(--c-brand-primary-hover);
+}
+
 button:disabled {
-  background-color: #aaa;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
+
 .error-message {
-  color: red;
+  color: var(--c-danger);
+  margin-top: var(--space-2);
+  font-weight: 500;
 }
+
 .upload-status {
-  color: green;
+  color: var(--c-success);
+  margin-top: var(--space-2);
+  font-size: var(--font-size-sm);
 }
-.resultado-container {
-  background-color: #f8f9fa;
-  padding: 1.5rem;
-  border-radius: 8px;
+
+.resultado-container h3 {
+  color: var(--c-brand-primary);
+  margin-bottom: var(--space-4);
 }
+
 pre {
   white-space: pre-wrap;
   word-wrap: break-word;
-  font-family: sans-serif;
+  font-family: var(--font-family);
+  color: var(--c-text-primary);
+  background: var(--c-bg-surface-hover);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  line-height: 1.6;
 }
 </style>

@@ -101,7 +101,7 @@ const getAlternativaClass = (alternativa) => {
       <p>Sua ferramenta de estudos com Inteligência Artificial</p>
     </header>
 
-    <form @submit.prevent="handleSubmit" class="form-container">
+    <form @submit.prevent="handleSubmit" class="form-container glass-panel">
       <div class="form-group">
         <label for="materia">Matéria</label>
         <select
@@ -180,7 +180,7 @@ const getAlternativaClass = (alternativa) => {
       <p>{{ error }}</p>
     </div>
 
-    <article v-if="questaoGerada" class="questao-container">
+    <article v-if="questaoGerada" class="questao-container glass-panel">
       <h2>Questão Gerada:</h2>
       <p class="enunciado">{{ questaoGerada.enunciado }}</p>
 
@@ -214,119 +214,181 @@ const getAlternativaClass = (alternativa) => {
 <style scoped>
 .container {
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: sans-serif;
-  color: #bebebe;
+  margin: var(--space-4) auto;
+  padding: var(--space-4);
+  animation: fadeIn 0.4s ease;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-8);
 }
+
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
 }
+
 label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  color: var(--c-text-primary);
 }
-input {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  background-color: var(--c-bg-surface);
+  color: var(--c-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-fast);
 }
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--c-brand-primary);
+}
+
+input[type="file"] {
+  padding: var(--space-2) 0;
+  color: var(--c-text-secondary);
+}
+
 button {
-  padding: 1rem;
-  background-color: #007bff;
+  padding: var(--space-3);
+  background-color: var(--c-brand-primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
+  margin-top: var(--space-4);
 }
+
+button:hover:not(:disabled) {
+  background-color: var(--c-brand-primary-hover);
+}
+
 button:disabled {
-  background-color: #aaa;
+  opacity: 0.6;
   cursor: not-allowed;
 }
+
 .loading-indicator,
 .error-message {
   text-align: center;
-  margin: 2rem 0;
-  font-weight: bold;
+  margin: var(--space-6) 0;
+  font-weight: 600;
 }
+
 .error-message {
-  color: red;
+  color: var(--c-danger);
 }
+
 .questao-container {
-  background-color: #f9f9f9;
-  border: 1px solid #eee;
-  padding: 1.5rem;
-  border-radius: 8px;
-  color: #333;
+  color: var(--c-text-primary);
 }
+
+.questao-container h2 {
+  margin-bottom: var(--space-4);
+  color: var(--c-brand-primary);
+}
+
 .enunciado {
-  font-weight: bold;
-  margin-bottom: 1rem;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-6);
 }
+
+.alternativas {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
 .alternativas li {
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  margin-bottom: 0.5rem;
-  border-radius: 4px;
+  padding: var(--space-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all var(--transition-fast);
   display: flex;
   align-items: center;
+  background: var(--c-bg-surface);
 }
+
 .alternativas li:hover {
-  background-color: #f0f0f0;
+  border-color: var(--c-brand-primary);
+  background-color: var(--c-bg-surface-hover);
 }
+
 .alternativas .letra {
   font-weight: bold;
-  margin-right: 0.8rem;
+  margin-right: var(--space-3);
+  color: var(--c-text-tertiary);
 }
+
 .alternativas .selecionada {
-  background-color: #dbeafe;
-  border-color: #93c5fd;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: var(--c-brand-primary);
+  color: var(--c-brand-primary);
 }
+
+.selecionada .letra {
+  color: var(--c-brand-primary);
+}
+
 .alternativas .correta {
-  background-color: #dcfce7;
-  border-color: #86efac;
-  color: #15803d;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--c-success);
+  color: var(--c-success);
 }
+
 .alternativas .incorreta {
-  background-color: #fee2e2;
-  border-color: #fca5a5;
-  color: #b91c1c;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--c-danger);
+  color: var(--c-danger);
+  text-decoration: line-through;
 }
+
 .resposta-container {
-  margin-top: 1rem;
-  padding: 1rem;
-  background-color: #e9f5e9;
-  border: 1px solid #a3d9a3;
-  border-radius: 4px;
+  margin-top: var(--space-6);
+  padding: var(--space-4);
+  background-color: var(--c-bg-surface-hover);
+  border-left: 4px solid var(--c-success);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
-select {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: white;
-}
+
 .upload-status {
-  font-size: 0.9rem;
-  color: green;
-  margin-top: 0.5rem;
+  font-size: var(--font-size-sm);
+  color: var(--c-success);
+  margin-top: var(--space-2);
 }
+
 textarea[readonly] {
-  background-color: #f1f1f1;
-  color: #555;
-  margin-top: 0.5rem;
+  background-color: var(--c-bg-surface-hover);
+  color: var(--c-text-secondary);
+  margin-top: var(--space-2);
 }
 </style>

@@ -57,7 +57,15 @@ export default {
     return apiClient.post('/salvar-simulado/', payload);
   },
 
-  gerarPlanoDeAula(materia, topico, sub_topico) {
-    return apiClient.post('/gerar-plano-de-aula', { materia, topico, sub_topico });
+  gerarPlanoDeAula(materia, topico, subTopico) {
+    return apiClient.post('/gerar-plano-de-aula', {
+      materia,
+      topico,
+      sub_topico: subTopico,
+    });
   },
+
+  getEstatisticas(sessionId) {
+    return apiClient.get(`/estatisticas/${sessionId}`);
+  }
 };

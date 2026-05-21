@@ -2,7 +2,9 @@
 import { ref, computed } from 'vue';
 import api from '@/services/api.js';
 import { edital, niveisDificuldade } from '@/data/editalData.js';
+import { useSession } from '@/composables/useSession';
 
+const { sessionId } = useSession();
 const etapa = ref('configuracao');
 
 const config = ref({
@@ -70,6 +72,7 @@ const finalizarSimulado = async () => {
   const resultadoParaSalvar = {
     materia: config.value.materia,
     topico: config.value.topico,
+    session_id: sessionId.value,
     questoes: questoes.value,
     respostasUsuario: respostasUsuario.value,
   };
@@ -236,156 +239,217 @@ const getClasseRevisao = (questao, alternativa, index) => {
 <style scoped>
 .container {
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
-  font-family: sans-serif;
+  margin: var(--space-4) auto;
+  padding: var(--space-4);
+  animation: fadeIn 0.4s ease;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .form-container,
 .questao-container,
 .resultado-placar {
-  margin-bottom: 2rem;
+  background: var(--c-bg-surface);
+  border: 1px solid var(--c-border);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+  box-shadow: var(--shadow-sm);
 }
+
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
+
 label {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+  color: var(--c-text-primary);
 }
+
 input,
 select {
-  padding: 0.8rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
+  background-color: var(--c-bg-surface);
+  color: var(--c-text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  transition: border-color var(--transition-fast);
 }
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--c-brand-primary);
+}
+
 button {
-  padding: 1rem;
-  background-color: #007bff;
+  padding: var(--space-3) var(--space-6);
+  background-color: var(--c-brand-primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
 }
+
+button:hover:not(:disabled) {
+  background-color: var(--c-brand-primary-hover);
+}
+
 button:disabled {
-  background-color: #aaa;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
+
 .error-message {
-  color: red;
-  margin-top: 1rem;
+  color: var(--c-danger);
+  margin-top: var(--space-4);
+  font-weight: 500;
 }
+
 .progresso-bar {
   text-align: center;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+  color: var(--c-text-secondary);
 }
+
 .enunciado {
-  font-weight: bold;
+  font-size: var(--font-size-lg);
+  font-weight: 500;
+  margin-bottom: var(--space-6);
+  color: var(--c-text-primary);
 }
+
 .alternativas {
   list-style: none;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
+
 .alternativas li {
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  margin-bottom: 0.5rem;
-  border-radius: 4px;
+  padding: var(--space-4);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-md);
   cursor: pointer;
   display: flex;
   align-items: center;
+  transition: all var(--transition-fast);
+  background: var(--c-bg-surface);
 }
+
 .alternativas li:hover {
-  background-color: #f0f0f0;
-  color: #343a40;
+  border-color: var(--c-brand-primary);
+  background: var(--c-bg-surface-hover);
 }
+
 .alternativas li.selecionada {
-  background-color: #dbeafe;
-  border-color: #93c5fd;
-  color: #343a40;
+  background-color: rgba(59, 130, 246, 0.1); /* var(--c-brand-primary) with opacity */
+  border-color: var(--c-brand-primary);
+  color: var(--c-brand-primary);
+  font-weight: 500;
 }
+
 .alternativas .letra {
   font-weight: bold;
-  margin-right: 0.8rem;
+  margin-right: var(--space-3);
+  color: var(--c-text-tertiary);
 }
+
+.selecionada .letra {
+  color: var(--c-brand-primary);
+}
+
 .navegacao-simulado {
   display: flex;
   justify-content: flex-end;
-  margin-top: 1rem;
+  margin-top: var(--space-4);
 }
+
 .resultado-placar {
   text-align: center;
-  font-size: 1.5rem;
-  background-color: #f8f9fa;
-  padding: 2rem;
-  border-radius: 8px;
-  color: #343a40;
+  font-size: var(--font-size-xl);
 }
+
+.resultado-placar strong {
+  color: var(--c-brand-primary);
+  font-size: var(--font-size-3xl);
+  display: block;
+  margin: var(--space-2) 0;
+}
+
 .botao-reiniciar {
   display: block;
-  margin: 0 auto 2rem auto;
+  margin: 0 auto var(--space-8) auto;
 }
 
 .revisao-container {
-  margin-top: 2rem;
-  border-top: 1px solid #ccc;
-  padding-top: 1rem;
+  margin-top: var(--space-8);
+  border-top: 1px solid var(--c-border);
+  padding-top: var(--space-6);
 }
 
 .revisao-questao {
-  margin-bottom: 2rem;
-  padding: 1rem;
-  border: 1px solid #eee;
-  border-radius: 8px;
-}
-
-.revisao-questao .enunciado {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-6);
+  padding: var(--space-6);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  background: var(--c-bg-surface);
 }
 
 .alternativas-revisao {
   list-style: none;
   padding: 0;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
 
 .alternativas-revisao li {
-  padding: 0.8rem;
-  margin-bottom: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  padding: var(--space-3);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-border);
 }
 
 .alternativas-revisao .correta {
-  background-color: #dcfce7;
-  border-color: #86efac;
-  color: #15803d;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--c-success);
+  color: var(--c-success);
   font-weight: bold;
 }
 
 .alternativas-revisao .resposta-usuario-incorreta {
-  background-color: #fee2e2;
-  border-color: #fca5a5;
-  color: #b91c1c;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--c-danger);
+  color: var(--c-danger);
   text-decoration: line-through;
 }
 
 .revisao-comentarios {
-  font-size: 0.9rem;
-  background-color: #f8f9fa;
-  color: #343a40;
-  padding: 1rem;
-  border-radius: 4px;
+  font-size: var(--font-size-sm);
+  background-color: var(--c-bg-surface-hover);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
 }
 
 .revisao-comentarios details {
   cursor: pointer;
+  margin-top: var(--space-2);
 }
 
 .revisao-comentarios summary {
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  color: var(--c-brand-primary);
 }
 </style>

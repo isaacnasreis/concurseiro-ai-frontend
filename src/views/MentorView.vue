@@ -84,7 +84,7 @@ const getQuizClass = (alternativa) => {
       iniciar seus estudos.
     </p>
 
-    <div class="form-container">
+    <div class="form-container glass-panel">
       <div class="form-group">
         <label>Matéria</label>
         <select v-model="materiaSelecionada">
@@ -130,7 +130,7 @@ const getQuizClass = (alternativa) => {
     </div>
     <div v-if="error" class="error-message">{{ error }}</div>
 
-    <article v-if="planoDeAula" class="plano-aula-container">
+    <article v-if="planoDeAula" class="plano-aula-container glass-panel">
       <h3>
         Plano de Aula: {{ topicoSelecionado }}
         {{ subTopicoSelecionado ? ' - ' + subTopicoSelecionado : '' }}
@@ -189,97 +189,181 @@ const getQuizClass = (alternativa) => {
 <style scoped>
 .container {
   max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
+  margin: var(--space-4) auto;
+  padding: var(--space-4);
+  animation: fadeIn 0.4s ease;
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+  text-align: center;
+  color: var(--c-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+p {
+  text-align: center;
+  color: var(--c-text-secondary);
+  margin-bottom: var(--space-6);
+}
+
 .form-container {
-  padding: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
 }
+
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-4);
 }
+
 label {
   display: block;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+  color: var(--c-text-primary);
 }
+
 select,
 button {
   width: 100%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: var(--space-3);
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--c-border);
+  font-family: var(--font-family);
 }
+
+select {
+  background-color: var(--c-bg-surface);
+  color: var(--c-text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+select:focus {
+  outline: none;
+  border-color: var(--c-brand-primary);
+}
+
 button {
-  background-color: #007bff;
+  background-color: var(--c-brand-primary);
   color: white;
   cursor: pointer;
   border: none;
-  margin-top: 1rem;
+  margin-top: var(--space-4);
+  font-weight: 600;
+  transition: background-color var(--transition-fast);
 }
+
+button:hover:not(:disabled) {
+  background-color: var(--c-brand-primary-hover);
+}
+
 button:disabled {
-  background-color: #aaa;
+  opacity: 0.6;
+  cursor: not-allowed;
 }
+
 .loading-indicator,
 .error-message {
   text-align: center;
-  margin: 2rem;
+  margin: var(--space-6);
+  font-weight: 600;
 }
+
 .error-message {
-  color: red;
+  color: var(--c-danger);
 }
 
 .plano-aula-container {
-  margin-top: 2rem;
+  color: var(--c-text-primary);
 }
+
+.plano-aula-container h3 {
+  color: var(--c-brand-primary);
+  margin-bottom: var(--space-6);
+}
+
 .plano-aula-container section {
-  margin-bottom: 2rem;
+  margin-bottom: var(--space-6);
 }
+
 .plano-aula-container h4 {
-  border-bottom: 2px solid #007bff;
-  padding-bottom: 0.5rem;
-  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--c-brand-primary);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-4);
+  color: var(--c-text-primary);
+}
+
+.plano-aula-container ul {
+  padding-left: var(--space-6);
+  color: var(--c-text-secondary);
+  line-height: 1.6;
+}
+
+.plano-aula-container p {
+  text-align: left;
+  line-height: 1.6;
 }
 
 .questao-exemplo {
-  background-color: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
+  background-color: var(--c-bg-surface-hover);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--c-border);
 }
+
 .enunciado {
-  font-weight: bold;
+  font-weight: 500;
+  margin-bottom: var(--space-4);
 }
+
 .alternativas {
   list-style: none;
   padding: 0;
 }
+
 .alternativas li {
-  padding: 0.8rem;
-  border: 1px solid #ddd;
-  margin: 0.5rem 0;
-  border-radius: 4px;
+  padding: var(--space-3);
+  border: 1px solid var(--c-border);
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
   cursor: pointer;
+  transition: all var(--transition-fast);
+  background-color: var(--c-bg-surface);
 }
+
 .alternativas li:hover {
-  background-color: #f0f0f0;
+  border-color: var(--c-brand-primary);
+  background-color: var(--c-bg-surface-hover);
 }
+
 .alternativas .selecionada {
-  background-color: #dbeafe;
+  background-color: rgba(59, 130, 246, 0.1);
+  border-color: var(--c-brand-primary);
+  color: var(--c-brand-primary);
 }
+
 .alternativas .correta {
-  background-color: #dcfce7;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: var(--c-success);
+  color: var(--c-success);
 }
+
 .alternativas .incorreta {
-  background-color: #fee2e2;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-color: var(--c-danger);
+  color: var(--c-danger);
   text-decoration: line-through;
 }
 
 .revisao-comentarios {
-  margin-top: 1rem;
-  background-color: #e9ecef;
-  padding: 1rem;
-  border-radius: 4px;
+  margin-top: var(--space-4);
+  background-color: var(--c-bg-surface);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--c-brand-primary);
 }
 </style>

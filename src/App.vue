@@ -24,6 +24,7 @@ const handleSaveName = () => {
         </div>
         <nav>
           <RouterLink to="/">Dashboard</RouterLink>
+          <RouterLink to="/gerador">Gerador</RouterLink>
           <RouterLink to="/simulado">Simulados</RouterLink>
           <RouterLink to="/simplificador">Simplificador</RouterLink>
           <RouterLink to="/mentor">Mentor AI</RouterLink>
