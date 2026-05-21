@@ -101,86 +101,96 @@ const getAlternativaClass = (alternativa) => {
       <p>Sua ferramenta de estudos com Inteligência Artificial</p>
     </header>
 
-    <form @submit.prevent="handleSubmit" class="form-container glass-panel">
-      <div class="form-group">
-        <label for="materia">Matéria</label>
-        <select
-          id="materia"
-          v-model="materiaSelecionada"
-          @change="atualizarTopico"
-        >
-          <option
-            v-for="materia in Object.keys(edital)"
-            :key="materia"
-            :value="materia"
+      <div v-if="isLoading" class="loading-container glass-panel">
+        <div class="spinner">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="80" height="80">
+            <circle cx="50" cy="50" r="40" stroke="var(--c-brand-primary)" stroke-width="8" fill="none" stroke-dasharray="160" stroke-linecap="round">
+              <animateTransform attributeName="transform" type="rotate" from="0 50 50" to="360 50 50" dur="1.2s" repeatCount="indefinite" />
+            </circle>
+          </svg>
+        </div>
+        <h3>Processando com IA...</h3>
+        <p>A inteligência artificial está elaborando sua questão. Isso pode levar alguns segundos.</p>
+      </div>
+
+      <form v-else @submit.prevent="handleSubmit" class="form-container glass-panel">
+        <div class="form-group">
+          <label for="materia">Matéria</label>
+          <select
+            id="materia"
+            v-model="materiaSelecionada"
+            @change="atualizarTopico"
           >
-            {{ materia }}
-          </option>
-        </select>
-      </div>
+            <option
+              v-for="materia in Object.keys(edital)"
+              :key="materia"
+              :value="materia"
+            >
+              {{ materia }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="topico">Tópico</label>
-        <select id="topico" v-model="topicoSelecionado">
-          <option
-            v-for="topico in topicosDisponiveis"
-            :key="topico"
-            :value="topico"
-          >
-            {{ topico }}
-          </option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="topico">Tópico</label>
+          <select id="topico" v-model="topicoSelecionado">
+            <option
+              v-for="topico in topicosDisponiveis"
+              :key="topico"
+              :value="topico"
+            >
+              {{ topico }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="nivel">Nível de Dificuldade</label>
-        <select id="nivel" v-model="nivelSelecionado">
-          <option
-            v-for="nivel in niveisDificuldade"
-            :key="nivel"
-            :value="nivel"
-          >
-            {{ nivel }}
-          </option>
-        </select>
-      </div>
+        <div class="form-group">
+          <label for="nivel">Nível de Dificuldade</label>
+          <select id="nivel" v-model="nivelSelecionado">
+            <option
+              v-for="nivel in niveisDificuldade"
+              :key="nivel"
+              :value="nivel"
+            >
+              {{ nivel }}
+            </option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label for="upload-contexto">Contexto (Opcional)</label>
-        <input
-          type="file"
-          id="upload-contexto"
-          @change="handleFileUpload"
-          accept=".txt,.pdf"
-        />
+        <div class="form-group">
+          <label for="upload-contexto">Contexto (Opcional)</label>
+          <div class="file-upload-wrapper">
+            <label for="upload-contexto" class="btn-file-upload">
+              📁 Escolher Arquivo PDF ou TXT
+            </label>
+            <input
+              type="file"
+              id="upload-contexto"
+              @change="handleFileUpload"
+              accept=".txt,.pdf"
+              class="hidden-input"
+            />
+          </div>
 
-        <p v-if="uploadStatus" class="upload-status">{{ uploadStatus }}</p>
-        <p v-if="uploadError" class="error-message">{{ uploadError }}</p>
+          <p v-if="uploadStatus" class="upload-status">{{ uploadStatus }}</p>
+          <p v-if="uploadError" class="error-message">{{ uploadError }}</p>
 
-        <textarea
-          v-if="contexto"
-          id="contexto"
-          v-model="contexto"
-          rows="8"
-          placeholder="Conteúdo do arquivo aparecerá aqui..."
-          readonly
-        ></textarea>
-      </div>
+          <textarea
+            v-if="contexto"
+            id="contexto"
+            v-model="contexto"
+            rows="8"
+            placeholder="Conteúdo do arquivo aparecerá aqui..."
+            readonly
+          ></textarea>
+        </div>
 
-      <button type="submit" :disabled="isLoading">
-        {{ isLoading ? 'Gerando...' : 'Gerar Questão' }}
-      </button>
-    </form>
-
-    <div v-if="isLoading" class="loading-indicator">
-      <p>Aguarde, a IA está elaborando sua questão...</p>
+        <button type="submit">Gerar Questão</button>
+        <div v-if="error" class="error-message">{{ error }}</div>
+      </form>
     </div>
 
-    <div v-if="error" class="error-message">
-      <p>{{ error }}</p>
-    </div>
-
-    <article v-if="questaoGerada" class="questao-container glass-panel">
+    <article v-if="questaoGerada && !isLoading" class="questao-container glass-panel">
       <h2>Questão Gerada:</h2>
       <p class="enunciado">{{ questaoGerada.enunciado }}</p>
 
@@ -229,11 +239,14 @@ header {
   margin-bottom: var(--space-8);
 }
 
-.form-container {
+.form-container,
+.questao-container {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
   margin-bottom: var(--space-8);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
 }
 
 .form-group {
@@ -266,9 +279,32 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--c-brand-primary);
 }
 
-input[type="file"] {
-  padding: var(--space-2) 0;
-  color: var(--c-text-secondary);
+/* Estilo melhorado para upload de arquivo */
+.file-upload-wrapper {
+  margin-top: var(--space-2);
+}
+
+.hidden-input {
+  display: none !important;
+}
+
+.btn-file-upload {
+  display: inline-block;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--c-bg-surface-hover);
+  border: 1px dashed var(--c-brand-primary);
+  color: var(--c-brand-primary);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  text-align: center;
+  width: 100%;
+}
+
+.btn-file-upload:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-style: solid;
 }
 
 button {
@@ -293,19 +329,11 @@ button:disabled {
   cursor: not-allowed;
 }
 
-.loading-indicator,
 .error-message {
   text-align: center;
-  margin: var(--space-6) 0;
-  font-weight: 600;
-}
-
-.error-message {
   color: var(--c-danger);
-}
-
-.questao-container {
-  color: var(--c-text-primary);
+  margin-top: var(--space-4);
+  font-weight: 600;
 }
 
 .questao-container h2 {
@@ -390,5 +418,34 @@ textarea[readonly] {
   background-color: var(--c-bg-surface-hover);
   color: var(--c-text-secondary);
   margin-top: var(--space-2);
+}
+
+/* Loading State UI */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+  background: var(--c-bg-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-6);
+}
+
+.spinner {
+  margin-bottom: var(--space-6);
+}
+
+.loading-container h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--c-brand-primary);
+  margin-bottom: var(--space-2);
+}
+
+.loading-container p {
+  color: var(--c-text-secondary);
+  max-width: 400px;
 }
 </style>
